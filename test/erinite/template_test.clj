@@ -64,8 +64,27 @@
     :params   [:2]
     :children []}])
 
-
 (def transformations-2
+  {[:div#name :.first.name] [:content :first-name]
+   [:div#name :.last.name] [:content :last-name]
+   [:ul.details :li.details :span] [:content :details]})
+
+(def precompiled-transformation-2
+  [{:action   :content
+    :path     [2 2]
+    :params   [:first-name]
+    :children []}
+   {:action   :content
+    :path     [2 3]
+    :params   [:last-name]
+    :children []}
+   {:action   :content
+    :path     [3 2 2]
+    :params   [:details]
+    :children []}])
+
+
+#_(def transformations-#2
   {[:div#name]  [:content :1]
    [:div.name]  [:content :2]
    [:div.a.b]   [:content :3]})
@@ -149,14 +168,16 @@
 
 (deftest precompile-transform-test
   (testing "precompile simple template transformations"
-    (is (= precompiled-transformation-1
-           (tcompile/precompile-transforms
-             normalized-template-1
-             transformations-1))))
-  #_(testing "precompile more complex template transformations"
-    (is (= precompiled-transformation-2
-           (tcompile/precompile-transforms
-             normalized-template-2
-             transformations-2)))))
+    (is (= (set precompiled-transformation-1)
+           (set
+             (tcompile/precompile-transforms
+               normalized-template-1
+               transformations-1)))))
+  (testing "precompile more complex template transformations"
+    (is (= (set precompiled-transformation-2)
+           (set
+             (tcompile/precompile-transforms
+               normalized-template-2
+               transformations-2))))))
 
 
