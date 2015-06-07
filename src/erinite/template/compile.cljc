@@ -39,20 +39,29 @@
           (for [el-class (clojure.string/split classes #" ")]
             (keyword (str "." el-class))))))))
 
+(declare precompile-transforms*recursive)
 
 (defn find-matching-xforms
-  [selector-path xforms compiled-xforms idx-path]
+  [selector-path transformations compiled-xforms idx-path children]
   (reduce
     (fn [xforms [pattern [action & params]]]
       (if (matches-sel-pattern? selector-path pattern)
         (conj xforms
-              {:action   action
-               :params   params
-               :path     idx-path
-               :children [] })
+              {:action    action
+               :params    params
+               :path      idx-path
+               :children  (flatten
+                            (map-indexed
+                              (fn [index child]
+                                (precompile-transforms*recursive
+                                  child 
+                                  transformations
+                                  [(+ 2 index)]
+                                  selector-path))
+                              children))})
         xforms))
     compiled-xforms
-    xforms))
+    transformations))
 
 
 (defn- precompile-transforms*sequential
@@ -63,7 +72,8 @@
                 xforms (find-matching-xforms selector-path
                                              transformations
                                              compiled-xforms
-                                             template-path)
+                                             template-path
+                                             args)
                 continue  (into continue 
                                 (map
                                   #(vector %2 (conj template-path %1) selector-path)
@@ -98,12 +108,13 @@
                   xforms (find-matching-xforms selector-path
                                                transformations
                                                []
-                                               template-path) ]
-               (into
-                (or xforms [])
+                                               template-path
+                                               args)]
+              (if (seq xforms)
+                xforms
                 (map-indexed
                   (fn [index child]
-                    (precompile-transforms* 
+                    (precompile-transforms*recursive
                       child 
                       transformations
                       (conj template-path (+ 2 index))
@@ -128,7 +139,10 @@
    pairs, which can be used with update-in to apply the transformations
    to the template."
   [template transformations]
-  (precompile-transforms*sequential
+  ;; Sequential performed slightly better in benchmarks, but is more
+  ;; complex and therefore not a good place to implement new features
+  ;; Need to also change find-matching-xforms to switch
+  #_(precompile-transforms*sequential
     template
     (convert-selectors-to-sets transformations)
     []  ; compiled xforms
@@ -136,7 +150,7 @@
     []  ; selector path
     []  ; continuation
     ) 
-  #_(precompile-transforms*recursive
+  (precompile-transforms*recursive
     template
     (convert-selectors-to-sets transformations)
     []   ; template path

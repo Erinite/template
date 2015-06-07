@@ -67,7 +67,8 @@
 (def transformations-2
   {[:div#name :.first.name] [:content :first-name]
    [:div#name :.last.name] [:content :last-name]
-   [:ul.details :li.details :span] [:content :details]})
+   [:ul.details :li.details]  [:clone-for :details]
+   [:ul.details :li.details :span] [:content :details-name]})
 
 (def precompiled-transformation-2
   [{:action   :content
@@ -78,10 +79,13 @@
     :path     [2 3]
     :params   [:last-name]
     :children []}
-   {:action   :content
-    :path     [3 2 2]
+   {:action   :clone-for
+    :path     [3 2]
     :params   [:details]
-    :children []}])
+    :children [{:action   :content
+                :path     [2]
+                :params   [:details-name]
+                :children []}]}])
 
 
 #_(def transformations-#2
