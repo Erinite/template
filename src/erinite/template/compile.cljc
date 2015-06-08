@@ -56,7 +56,7 @@
                                 (precompile-transforms*recursive
                                   child 
                                   transformations
-                                  [(+ 2 index)]
+                                  [index]
                                   selector-path))
                               children))})
         xforms))
@@ -164,23 +164,34 @@
    against, will apply the transformations to the template."
   [transformations action-map]
   ; TODO: validate that transformations are precompiled
-  (for [{:keys [path action params children]} transformations
-        update-fn (get action-map action)]
+  (for [{:keys [path action params children]} transformations]
     ;; Only generate xform code if there is an update function for this action
-    (when update-fn
+    (when-let [update-fn (get action-map action)]
       ;; If there are any child xforms, then bake them too
       (let [children (when children
                        (compile-transforms children action-map))]
         ;; Return a function which applies the transformation to the passed-in
         ;; template and a parameters map
-        (fn [template parameters-map]
+        (fn [template parameters-map-root parameters-map-scoped]
           (update-in
             template
             path
             update-fn
-            parameters-map
+            parameters-map-root
+            parameters-map-scoped
             params
             children))))))
+
+(defn apply-xforms
+  [normalized-template compiled-transformations parameters-map-root parameters-map-scoped]
+  (reduce
+    (fn [template transformation]
+      (transformation
+        template
+        parameters-map-root
+        parameters-map-scoped))
+    normalized-template
+    compiled-transformations))
 
 
 (defn compile
@@ -191,9 +202,9 @@
   ; TODO: validate that normalized-template is in correct normalized format
   ; TODO: validate that compiled-transformations are compiled 
   (fn template-render [parameters-map]
-    (reduce
-      (fn [template transformation]
-        (transformation template parameters-map))
+    (apply-xforms
       normalized-template
-      compiled-transformations)))
+      compiled-transformations
+      parameters-map
+      parameters-map)))
 
