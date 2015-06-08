@@ -1,4 +1,9 @@
 
+# 0.2.0
+*08 June 2015*
+
+ClojureScript support tested and verified to work.
+
 # 0.1.2
 *08 June 2015*
 
