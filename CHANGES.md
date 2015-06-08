@@ -4,6 +4,8 @@
 
 More transformation functions and more testing.
 
+* Transformations now support looking up parameters by key (get) or by path
+  (get-in)
 * New transformations: set-attr, set-classes, set-class, append-content,
   prepend-content, set-element-type
 
