@@ -228,7 +228,7 @@ To use custom actions, you simply pass them to `compile-template` or `compile-pr
 ;; Create action map (possibly merging custom transformations into the default map)
 (def my-custom-actions
   (assoc
-    erinite.template.transforms/default-transform
+    erinite.template.transforms/default-transforms
     :upper-case
     upper-case-transformation))
 
