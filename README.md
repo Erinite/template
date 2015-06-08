@@ -162,20 +162,22 @@ functions is simple:
                   :last-name "Smith"
                   :details [{:text "Some text"}
                             {:text "Some more text"}]})
+```
+The result is the same as before:
 
-; [:div {}
-;   [:div {:id "name"}
-;     [:div {:class "first name"} "Bob"]
-;     [:div {:class "last name"} "Smith"]]
-;   [:ul {:class "details"}
-;     [:li {:class "details"}
-;       [:span {} "Some text"]
-;       [:a {:class "link" :href "http://example.com"} "link"]] 
-;     [:li {:class "details"}
-;       [:span {} "Some more text"]
-;       [:a {:class "link" :href "http://example.com"} "link"]]]
-;   [:div {:id "footer"}]])
-
+```clj
+[:div {}
+  [:div {:id "name"}
+    [:div {:class "first name"} "Bob"]
+    [:div {:class "last name"} "Smith"]]
+  [:ul {:class "details"}
+    [:li {:class "details"}
+      [:span {} "Some text"]
+      [:a {:class "link" :href "http://example.com"} "link"]] 
+    [:li {:class "details"}
+      [:span {} "Some more text"]
+      [:a {:class "link" :href "http://example.com"} "link"]]]
+  [:div {:id "footer"}]])
 ```
 
 ### Custom Actions
@@ -231,8 +233,8 @@ To use custom actions, you simply pass them to `compile-template` or `compile-pr
     upper-case-transformation))
 
 ;; Compile your templates
-(def render-template (t/compile-template hiccup transformations))
-(def render-template (t/compile-preprocessed preprocessed-template))
+(def render-template (t/compile-template hiccup transformations my-custom-actions))
+(def render-template (t/compile-preprocessed preprocessed-template my-custom-actions))
 
 ```
 
