@@ -50,18 +50,23 @@ compile to both Clojure and Clojurescript.
                   :details [{:text "Some text"}
                             {:text "Some more text"}]})
 
-; [:div {}
-;   [:div {:id "name"}
-;     [:div {:class "first name"} "Bob"]
-;     [:div {:class "last name"} "Smith"]]
-;   [:ul {:class "details"}
-;     [:li {:class "details"}
-;       [:span {} "Some text"]
-;       [:a {:class "link" :href "http://example.com"} "link"]] 
-;     [:li {:class "details"}
-;       [:span {} "Some more text"]
-;       [:a {:class "link" :href "http://example.com"} "link"]]]
-;   [:div {:id "footer"}]])
+```
+
+The call to render-template would output this transformed hiccup template:
+
+```clj
+[:div {}
+  [:div {:id "name"}
+    [:div {:class "first name"} "Bob"]
+    [:div {:class "last name"} "Smith"]]
+  [:ul {:class "details"}
+    [:li {:class "details"}
+      [:span {} "Some text"]
+      [:a {:class "link" :href "http://example.com"} "link"]] 
+    [:li {:class "details"}
+      [:span {} "Some more text"]
+      [:a {:class "link" :href "http://example.com"} "link"]]]
+  [:div {:id "footer"}]])
 ```
 
 ### Transformations
