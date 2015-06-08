@@ -29,10 +29,12 @@
    Child transforms:     not applied
    Read params:          scoped
    Narrow scope:         no
-   Expected args:        [key]"
+   Expected args:        [korks]"
   [[elem attrs & content :as template] parameters scoped-parameters action-arguments child-transformations]
-  (if-let [[key] action-arguments]
-    [elem attrs (get scoped-parameters key)]
+  (if-let [[korks] action-arguments]
+    [elem attrs (if (vector? korks)
+                  (get-in scoped-parameters korks)
+                  (get scoped-parameters korks))]
     template))
 
 
@@ -42,10 +44,12 @@
    Child transforms:     not applied
    Read params:          root
    Narrow scope:         no
-   Expected args:        [key]"
+   Expected args:        [korks]"
   [[elem attrs & content :as template] parameters scoped-parameters action-arguments child-transformations]
-  (if-let [[key] action-arguments]
-    [elem attrs (get parameters key)]
+  (if-let [[korks] action-arguments]
+    [elem attrs (if (vector? korks)
+                  (get-in parameters korks)  
+                  (get parameters korks))]
     template))
 
 
@@ -55,9 +59,9 @@
    Child transforms:     applied
    Read params:          scoped
    Narrow scope:         yes
-   Expected args:        [key]"
+   Expected args:        [korks]"
   [[elem attrs & content :as template] parameters scoped-parameters action-arguments child-transformations]
-  (if-let [[key] action-arguments]
+  (if-let [[korks] action-arguments]
     (apply
       vector
       elem
@@ -72,7 +76,9 @@
               parameters
               item))) ; Scoped by item
         []
-        (get scoped-parameters key)))
+        (if (vector? korks)
+          (get-in scoped-parameters korks)   
+          (get scoped-parameters korks))))
     template))
 
 
@@ -82,13 +88,15 @@
    Child transforms:     applied
    Read params:          scoped
    Narrow scope:         no
-   Expected args:        [attr-name value-key]"
+   Expected args:        [attr-name korks]"
   [[elem attrs & content :as template] parameters scoped-parameters action-arguments child-transformations]
   (apply
     vector
     elem
-    (if-let [[attr-name value-key] action-arguments]
-      (assoc attrs attr-name (get scoped-parameters value-key))
+    (if-let [[attr-name korks] action-arguments]
+      (assoc attrs attr-name (if (vector? korks)
+                               (get-in scoped-parameters korks)  
+                               (get scoped-parameters korks)))
     attrs)
     (apply-xforms
       content
@@ -103,13 +111,15 @@
    Child transforms:     applied
    Read params:          scoped
    Narrow scope:         no
-   Expected args:        [key]"
+   Expected args:        [korks]"
   [[elem attrs & content :as template] parameters scoped-parameters action-arguments child-transformations]
   (apply
     vector
     elem
-    (if-let [[key] action-arguments]
-      (->> (get scoped-parameters key)  ; Get the class map to apply to template
+    (if-let [[korks] action-arguments]
+      (->> (if (vector? korks)          ; Get the class map to apply to template
+              (get-in scoped-parameters korks)
+              (get scoped-parameters korks))  
            (filter val)                 ; Remove any classes that are not set to true
            (map (comp name first))      ; Get the class names as strings
            (into                        ; Append the new class names to the end of the existing classes
@@ -132,17 +142,19 @@
    Child transforms:     applied
    Read params:          scoped
    Narrow scope:         no
-   Expected args:        [class-name should-set-key]"
+   Expected args:        [class-name should-set-korks]"
   [[elem {classes :class :as attrs} & content :as template] parameters scoped-parameters action-arguments child-transformations]
   (apply
     vector
     elem
-    (let [[class-name should-set-key] action-arguments]
+    (let [[class-name should-set-korks] action-arguments]
       (if-let [class-name (and class-name (name class-name))]
         (assoc
           attrs
           :class
-          (if (get scoped-parameters should-set-key)
+          (if (if (vector? should-set-korks)
+                (get-in scoped-parameters should-set-korks) 
+                (get scoped-parameters should-set-korks))
             ;; Add class if not already present
             (if-not #?(:cljs (> (.indexOf (str classes) class-name) -1)
                          :clj  (re-find (re-pattern class-name) (str classes)))
@@ -165,7 +177,7 @@
    Child transforms:     applied (only to existing content, not to appended content)
    Read params:          scoped
    Narrow scope:         no
-   Expected args:        [key]"
+   Expected args:        [korks]"
   [[elem attrs & content :as template] parameters scoped-parameters action-arguments child-transformations]
   (apply
     vector
@@ -178,8 +190,10 @@
           child-transformations
           parameters
             scoped-parameters))
-      (when-let [[key] action-arguments]
-        (get scoped-parameters key)))))
+      (when-let [[korks] action-arguments]
+        (if (vector? korks)
+          (get-in scoped-parameters korks)     
+          (get scoped-parameters korks))))))
 
 
 (defn prepend-content
@@ -188,13 +202,16 @@
    Child transforms:     applied (only to existing content, not to prepended content)
    Read params:          scoped
    Narrow scope:         no
-   Expected args:        [key]"
+   Expected args:        [korks]"
   [[elem attrs & content :as template] parameters scoped-parameters action-arguments child-transformations]
   (apply
     vector
     elem
     attrs
-    (when-let [[key] action-arguments] (get scoped-parameters key))
+    (when-let [[korks] action-arguments]
+      (if (vector? korks)
+        (get-in scoped-parameters korks)  
+        (get scoped-parameters korks)))
     (apply-xforms
       content
       child-transformations
@@ -208,12 +225,14 @@
    Child transforms:     applied
    Read params:          scoped
    Narrow scope:         no
-   Expected args:        [key]"
+   Expected args:        [korks]"
   [[elem attrs & content :as template] parameters scoped-parameters action-arguments child-transformations]
   (apply
     vector
-    (if-let [[key] action-arguments]
-      (get scoped-parameters key)
+    (if-let [[korks] action-arguments]
+      (if (vector? korks)
+        (get-in scoped-parameters korks) 
+        (get scoped-parameters korks))
       elem)
     attrs
     (apply-xforms
