@@ -203,6 +203,8 @@ These transformation functions take the following arguments:
 * `child-transformations` - sequence of transformation functions to apply to
   this nodes children
 
+Transformation functions should return a modified template node. 
+
 As an example, the transformation function for :content looks like this:
 ```clj
 (defn content
@@ -245,6 +247,9 @@ To use custom actions, you simply pass them to `compile-template` or `compile-pr
 1. `transformations`: Transformations are always applied to the content of a node, so it is not possible to modify the parent (in practice this means that clone-for can clone the nodes' children but not the node itself, to do so you would have to select the parent instead)
 
 
+## Future
+
+See issue tracker.
 
 
 ## License
