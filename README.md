@@ -138,7 +138,7 @@ data structure which is less expensive to compile into a render function. This
 could, for example, be done on the server before sending the template to the
 client for rendering.
 
-The template and transformatinos, including precompiled templates, are pure
+The template and transformations, including precompiled templates, are pure
 data. This allows them to be easily transformed further, stored, transmitted or
 generated programatically. However, in order to efficently apply the template to
 data, it must be compiled into functions which apply the transformations. The
