@@ -15,12 +15,12 @@
    Read params:          none
    Narrow scope:         no
    Expected args:        none"
-  [template params-root params-scoped args child-xforms]
+  [template parameters scoped-parameters action-arguments child-transformations]
   (apply-xforms
     template
-    child-xforms
-    params-root
-    params-scoped))
+    child-transformations
+    parameters
+    scoped-parameters))
 
 
 (defn content
@@ -30,9 +30,9 @@
    Read params:          scoped
    Narrow scope:         no
    Expected args:        [key]"
-  [[elem attrs & content :as template] params-root params-scoped args child-xforms]
-  (if-let [[key] args]
-    [elem attrs (get params-scoped key)]
+  [[elem attrs & content :as template] parameters scoped-parameters action-arguments child-transformations]
+  (if-let [[key] action-arguments]
+    [elem attrs (get scoped-parameters key)]
     template))
 
 
@@ -43,9 +43,9 @@
    Read params:          root
    Narrow scope:         no
    Expected args:        [key]"
-  [[elem attrs & content :as template] params-root params-scoped args child-xforms]
-  (if-let [[key] args]
-    [elem attrs (get params-root key)]
+  [[elem attrs & content :as template] parameters scoped-parameters action-arguments child-transformations]
+  (if-let [[key] action-arguments]
+    [elem attrs (get parameters key)]
     template))
 
 
@@ -56,8 +56,8 @@
    Read params:          scoped
    Narrow scope:         yes
    Expected args:        [key]"
-  [[elem attrs & content :as template] params-root params-scoped args child-xforms]
-  (if-let [[key] args]
+  [[elem attrs & content :as template] parameters scoped-parameters action-arguments child-transformations]
+  (if-let [[key] action-arguments]
     (apply
       vector
       elem
@@ -68,11 +68,11 @@
             children
             (apply-xforms
               (into [] content) ;Transform relative to child
-              child-xforms
-              params-root
+              child-transformations
+              parameters
               item))) ; Scoped by item
         []
-        (get params-scoped key)))
+        (get scoped-parameters key)))
     template))
 
 
@@ -83,9 +83,9 @@
    Read params:          scoped
    Narrow scope:         no
    Expected args:        [attr-name value-key]"
-  [[elem attrs & content :as template] params-root params-scoped args child-xforms]
-  (if-let [[attr-name value-key] args]
-    (update-in template [1] assoc attr-name (get params-scoped value-key))
+  [[elem attrs & content :as template] parameters scoped-parameters action-arguments child-transformations]
+  (if-let [[attr-name value-key] action-arguments]
+    (update-in template [1] assoc attr-name (get scoped-parameters value-key))
     template))
 
 
