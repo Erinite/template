@@ -1,6 +1,6 @@
 (ns erinite.template-test
   (:require [clojure.test :refer :all]
-            [erinite.template.core :as tcore]
+            [erinite.template.core :as core]
             [erinite.template.compile :as compile]
             [erinite.template.hiccup :as hiccup]
             [erinite.template.transforms :as transforms]))
@@ -267,4 +267,43 @@
       (is (= rendered-template-2
              (render dummy-data-2))
           "render"))))
+
+
+;; Test public API
+
+(deftest compile-template-test
+  (testing "render simple template"
+    (let [render (core/compile-template template-1 transformations-1)]
+      (is (= rendered-template-1
+             (render dummy-data-1)))))
+  (testing "render more complex template"
+    (let [render (core/compile-template template-2 transformations-2)]
+      (is (= rendered-template-2
+             (render dummy-data-2))))))
+
+
+(deftest preprocess-template-test
+  (testing "preprocess simple template"
+    (is (= {:template normalized-template-1
+            :transforms precompiled-transformation-1}
+           (core/preprocess-template template-1 transformations-1))))
+  (testing "preprocess more complex template"
+    (is (= {:template normalized-template-2
+            :transforms precompiled-transformation-2}
+           (core/preprocess-template template-2 transformations-2)))))
+
+
+(deftest compile-preprocessed-test
+  (testing "render simple template"
+    (let [render  (core/compile-preprocessed
+                    {:template normalized-template-1
+                     :transforms precompiled-transformation-1})]
+      (is (= rendered-template-1
+             (render dummy-data-1)))))
+  (testing "render more complex template"
+    (let [render  (core/compile-preprocessed
+                    {:template normalized-template-2
+                     :transforms precompiled-transformation-2})]
+      (is (= rendered-template-2
+             (render dummy-data-2))))))
 
