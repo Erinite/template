@@ -21,6 +21,8 @@ compile to both Clojure and Clojurescript.
 
 ## Usage
 
+### Example
+
 ```clj
 (require '[erinite.template.core :as t])
 
