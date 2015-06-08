@@ -88,7 +88,8 @@ Or any combination of these (eg `:a.button.cancel`, `:#header.banner` or
 `:div#footer.contact`).
 
 The first transformation selector in the above example, `[:div#name :.first.name]`
-addresses the node `[:div.first.name]` in the sample hiccup.
+addresses the node `[:div.first.name]` in the sample hiccup. In CSS, this would
+be written as `div#name .first.name`
 
 Actions are vectors where the first element is a keyword naming the action and
 the remaining elements are parameters passed to the transformation function. It
