@@ -15,7 +15,7 @@ Add the following to your `:dependencies`:
 
 
 ```clj
-[erinite/template "0.1.0"]
+[erinite/template "0.1.1"]
 ```
 
 ### Maven
