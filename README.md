@@ -103,28 +103,30 @@ the remaining elements are parameters passed to the transformation function. It
 is possible to define your own, however the following actions are packaged with
 erinite/template:
 
-* `[:content key]` - Replace the content (that is, everything other than the
+* `[:content korks]` - Replace the content (that is, everything other than the
   node type and attributes map) of the node with the value found in the rendered
-parameters indexed by *key*.
-* `[:content-global key]` - Same as :content, but *key* is always "global" to
+parameters indexed by *korks*.
+* `[:content-global korks]` - Same as :content, but *korks** is always "global" to
   the passed in parameters rather than scoped to cloned items
-* `[:clone-for key]` - The node's content will be cloned for each item in the
-  sequence found at *key*. This creates a new "scope" for :content (ie :content
-will look up its key relative to the cloned item)
-* `[:set-attr attr-name key]` - Sets the nodes *attr-name* attribute to
-  value found at *key*.
-* `[:set-classes key]` - Looks up map of class keywords to booleans at *key*,
+* `[:clone-for korks]` - The node's content will be cloned for each item in the
+  sequence found at *korks*. This creates a new "scope" for :content (ie :content
+will look up its korks relative to the cloned item)
+* `[:set-attr attr-name korks]` - Sets the nodes *attr-name* attribute to
+  value found at *korks*.
+* `[:set-classes korks]` - Looks up map of class keywords to booleans at *korks**,
   for each class whose value is truthy, adds the class to the node.
-* `[:set-class class key]` - If value at *key* is truthy, then add class
-  named by *class* keyword to nodes classes (or do nothing if already present).
-If value at *key* is falsey, then remove the class instead (or do nothing if
+* `[:set-class class korks]` - If value at *korks** is truthy, then add class
+  named by *class* korksword to nodes classes (or do nothing if already present).
+If value at *korks* is falsey, then remove the class instead (or do nothing if
 already absent).
-* `[:append-content key]` - Append content found at *key* to the nodes
+* `[:append-content korks]` - Append content found at *korks** to the nodes
   content.
-* `[:prepend-content key]` - Prepend content found at *key* to the nodes
+* `[:prepend-content korks]` - Prepend content found at *korks** to the nodes
   content.
-* `[:set-element-type key]` - Replace element type of node with element type
-  keyword found at *key*. 
+* `[:set-element-type korks]` - Replace element type of node with element type
+  korksword found at *korks**. 
+
+`korks` can be either a single keyword, or a vector of keywords.
 
 
 ### Preprocessing
@@ -203,8 +205,10 @@ As an example, the transformation function for :content looks like this:
 ```clj
 (defn content
   [[elem attrs & content :as template] parameters scoped-parameters action-arguments child-transformations]
-  (if-let [[key] action-arguments]
-    [elem attrs (get scoped-parameters key)]
+  (if-let [[korks] action-arguments]
+    [elem attrs (if (vector? korks)
+                  (get-in scoped-parameters korks)
+                  (get scoped-parameters korks))]
     template))
 ```
 
