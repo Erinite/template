@@ -8,7 +8,6 @@
        :clj  [clojure.core.match :refer [match]])
     [erinite.template.hiccup :as hiccup]))
 
-(set! *warn-on-reflection* true)
 
 (defn- matches-sel-pattern?
   [sel-path pattern]

@@ -1,9 +1,11 @@
 (ns erinite.template-test
-  (:require [clojure.test :refer :all]
-            [erinite.template.core :as core]
-            [erinite.template.compile :as compile]
-            [erinite.template.hiccup :as hiccup]
-            [erinite.template.transforms :as transforms]))
+  (:require
+    #?(:clj [clojure.test :refer :all]
+       :cljs [cljs.test :refer-macros [deftest is testing run-tests]])
+    [erinite.template.core :as core]
+    [erinite.template.compile :as compile]
+    [erinite.template.hiccup :as hiccup]
+    [erinite.template.transforms :as transforms]))
 
 (def template-1
   [:div
@@ -330,14 +332,28 @@
            ((core/compile-template
               [:div#a [:div.b [:div {:data "test"} "dummy content"]]]
               {[:#a :.b :div] [:content :real]})
-            {:real "real content"}))))
+            {:real "real content"}))
+        "test with key")
+    (is (= [:div {:id "a"} [:div {:class "b"} [:div {:data "test"} "real content"]]]
+           ((core/compile-template
+              [:div#a [:div.b [:div {:data "test"} "dummy content"]]]
+              {[:#a :.b :div] [:content [:real :content]]})
+            {:real {:content "real content"}}))
+        "test with path"))
 
   (testing "content-global transformation"
     (is (= [:div {:id "a"} [:div {:class "b"} [:div {:data "test"} "real content"]]]
            ((core/compile-template
               [:div#a [:div.b [:div {:data "test"} "dummy content"]]]
               {[:#a :.b :div] [:content-global :real]})
-            {:real "real content"}))))
+            {:real "real content"}))
+        "test with key")
+    (is (= [:div {:id "a"} [:div {:class "b"} [:div {:data "test"} "real content"]]]
+           ((core/compile-template
+              [:div#a [:div.b [:div {:data "test"} "dummy content"]]]
+              {[:#a :.b :div] [:content-global [:real :content]]})
+            {:real {:content "real content"}}))
+        "test with path"))
 
   (testing "clone-for transformation"
     (is (= [:div {:id "a"} [:div {:class "b"} [:div {:data "test"} "dummy content"
@@ -348,6 +364,31 @@
               [:div#a [:div.b [:div {:data "test"} "dummy content"]]]
               {[:#a :.b :div] [:clone-for :seq]})
             {:seq [1 2 3 4]}))))
+
+  (testing "clone-for with child transformations"
+    (is (= [:div {:id "a"} [:div {:class "b"} [:div {:data "test"}
+                                               [:div {:class "c"} "abc"]
+                                               [:div {:class "c"} "def"]
+                                               [:div {:class "c"} "ghi"]]]]
+           ((core/compile-template
+              [:div#a [:div.b [:div {:data "test"} [:div.c]]]]
+              {[:#a :.b :div] [:clone-for :seq]
+               [:#a :.c]      [:content :text]})
+            {:seq [{:text "abc"}
+                   {:text "def"}
+                   {:text "ghi"}]}))
+        "test with content")
+    (is (= [:div {:id "a"} [:div {:class "b"} [:div {:data "test"}
+                                               [:div {:class "c"} "abc"]
+                                               [:div {:class "c"} "abc"]
+                                               [:div {:class "c"} "abc"]]]]
+           ((core/compile-template
+              [:div#a [:div.b [:div {:data "test"} [:div.c]]]]
+              {[:#a :.b :div] [:clone-for :seq]
+               [:#a :.c]      [:content-global :text]})
+            {:seq [1 2 3]
+             :text "abc"}))
+        "test with content-global"))
 
   (testing "set-classes transformation"
     (is (= [:div {:id "a"} [:div {:class "b"} [:div {:data "test" :class "foo baz"} "dummy content"]]]

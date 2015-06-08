@@ -6,6 +6,7 @@
   :dependencies [[org.clojure/clojure "1.7.0-RC1"]
                  [org.clojure/clojurescript "0.0-3308" :exclusions [org.clojure/clojure]]
                  [org.clojure/core.match "0.2.2"]]
+  :source-paths ["src" "test"]
   :profiles {
     :dev {
       :dependencies [[criterium "0.4.3"]]}})
