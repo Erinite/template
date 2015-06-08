@@ -164,23 +164,25 @@
    against, will apply the transformations to the template."
   [transformations action-map]
   ; TODO: validate that transformations are precompiled
-  (for [{:keys [path action params children]} transformations]
-    ;; Only generate xform code if there is an update function for this action
-    (when-let [update-fn (get action-map action)]
-      ;; If there are any child xforms, then bake them too
-      (let [children (when children
-                       (compile-transforms children action-map))]
-        ;; Return a function which applies the transformation to the passed-in
-        ;; template and a parameters map
-        (fn [template parameters-map-root parameters-map-scoped]
-          (update-in
-            template
-            path
-            update-fn
-            parameters-map-root
-            parameters-map-scoped
-            params
-            children))))))
+  (filter
+    identity
+    (for [{:keys [path action params children]} transformations]
+      ;; Only generate xform code if there is an update function for this action
+      (when-let [update-fn (get action-map action)]
+        ;; If there are any child xforms, then bake them too
+        (let [children (when children
+                         (compile-transforms children action-map))]
+          ;; Return a function which applies the transformation to the passed-in
+          ;; template and a parameters map
+          (fn [template parameters-map-root parameters-map-scoped]
+            (update-in
+              template
+              path
+              update-fn
+              parameters-map-root
+              parameters-map-scoped
+              params
+              children)))))))
 
 (defn apply-xforms
   [normalized-template compiled-transformations parameters-map-root parameters-map-scoped]

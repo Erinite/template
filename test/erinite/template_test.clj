@@ -307,3 +307,100 @@
       (is (= rendered-template-2
              (render dummy-data-2))))))
 
+
+(deftest transformation-test
+  (testing "compile invalid transformation"
+    ;; TODO: Decide what this should bo. Currently simply ignores transformation
+    ;; - should it be an error to compile with invalid/missing xforms??
+    (is (= [:div {:id "a"} [:div {:class "b"} [:div {:data "test"} "dummy content"]]]
+           ((core/compile-template
+              [:div#a [:div.b [:div {:data "test"} "dummy content"]]]
+              {[:#a :.b :div] [:invalid-xform]})
+            {}))))
+
+  (testing "no nop transformation"
+    (is (= [:div {:id "a"} [:div {:class "b"} [:div {:data "test"} "dummy content"]]]
+           ((core/compile-template
+              [:div#a [:div.b [:div {:data "test"} "dummy content"]]]
+              {[:#a :.b :div] [:nop]})
+            {}))))
+
+  (testing "content transformation"
+    (is (= [:div {:id "a"} [:div {:class "b"} [:div {:data "test"} "real content"]]]
+           ((core/compile-template
+              [:div#a [:div.b [:div {:data "test"} "dummy content"]]]
+              {[:#a :.b :div] [:content :real]})
+            {:real "real content"}))))
+
+  (testing "content-global transformation"
+    (is (= [:div {:id "a"} [:div {:class "b"} [:div {:data "test"} "real content"]]]
+           ((core/compile-template
+              [:div#a [:div.b [:div {:data "test"} "dummy content"]]]
+              {[:#a :.b :div] [:content-global :real]})
+            {:real "real content"}))))
+
+  (testing "clone-for transformation"
+    (is (= [:div {:id "a"} [:div {:class "b"} [:div {:data "test"} "dummy content"
+                                                "dummy content"
+                                                "dummy content"
+                                                "dummy content"]]]
+           ((core/compile-template
+              [:div#a [:div.b [:div {:data "test"} "dummy content"]]]
+              {[:#a :.b :div] [:clone-for :seq]})
+            {:seq [1 2 3 4]}))))
+
+  (testing "set-classes transformation"
+    (is (= [:div {:id "a"} [:div {:class "b"} [:div {:data "test" :class "foo baz"} "dummy content"]]]
+           ((core/compile-template
+              [:div#a [:div.b [:div {:data "test"} "dummy content"]]]
+              {[:#a :.b :div] [:set-classes :classes]})
+            {:classes {:foo true :bar false :baz true}}))))
+
+  (testing "set-class transformation"
+    (is (= [:div {:id "a"} [:div {:class "b"} [:div {:data "test" :class "foo"} "dummy content"]]]
+           ((core/compile-template
+              [:div#a [:div.b [:div {:data "test"} "dummy content"]]]
+              {[:#a :.b :div] [:set-class :foo :should-set-foo?]})
+            {:should-set-foo? true}))
+        "setting class")
+    (is (= [:div {:id "a"} [:div {:class "b"} [:div {:data "test" :class ""} "dummy content"]]]
+           ((core/compile-template
+              [:div#a [:div.b [:div {:data "test"} "dummy content"]]]
+              {[:#a :.b :div] [:set-class :foo :should-set-foo?]})
+            {:should-set-foo? false}))
+        "not setting class") 
+    (is (= [:div {:id "a"} [:div {:class "b"} [:div {:data "test" :class ""} "dummy content"]]]
+           ((core/compile-template
+              [:div#a [:div.b [:div {:data "test" :class "foo"} "dummy content"]]]
+              {[:#a :.b :div] [:set-class :foo :should-set-foo?]})
+            {:should-set-foo? false}))
+        "removing class"))
+
+  (testing "append-content transformation"
+    (is (= [:div {:id "a"} [:div {:class "b"} [:div {:data "test"} "dummy content" "real content"]]]
+           ((core/compile-template
+              [:div#a [:div.b [:div {:data "test"} "dummy content"]]]
+              {[:#a :.b :div] [:append-content :real]})
+            {:real "real content"}))))
+
+  (testing "prepend-content transformation"
+    (is (= [:div {:id "a"} [:div {:class "b"} [:div {:data "test"} "real content" "dummy content"]]]
+           ((core/compile-template
+              [:div#a [:div.b [:div {:data "test"} "dummy content"]]]
+              {[:#a :.b :div] [:prepend-content :real]})
+            {:real "real content"}))))
+
+  (testing "set-element-type transformation"
+    (is (= [:div {:id "a"} [:div {:class "b"} [:a {:data "test"} "dummy content"]]]
+           ((core/compile-template
+              [:div#a [:div.b [:div {:data "test"} "dummy content"]]]
+              {[:#a :.b :div] [:set-element-type :type]})
+            {:type :a}))))
+
+  (testing "set-attr transformation"
+    (is (= [:div {:id "a"} [:div {:class "b"} [:div {:id "foo" :data "test"} "dummy content"]]]
+           ((core/compile-template
+              [:div#a [:div.b [:div {:data "test"} "dummy content"]]]
+              {[:#a :.b :div] [:set-attr :id :attr-val]})
+            {:attr-val "foo"})))))
+
