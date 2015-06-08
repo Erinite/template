@@ -109,27 +109,27 @@ the remaining elements are parameters passed to the transformation function. It
 is possible to define your own, however the following actions are packaged with
 erinite/template:
 
-* `[:content *key*]` - Replace the content (that is, everything other than the
+* `[:content key]` - Replace the content (that is, everything other than the
   node type and attributes map) of the node with the value found in the rendered
 parameters indexed by *key*.
-* `[:content-global *key*]` - Same as :content, but *key* is always "global" to
+* `[:content-global key]` - Same as :content, but *key* is always "global" to
   the passed in parameters rather than scoped to cloned items
-* `[:clone-for *key*]` - The node's content will be cloned for each item in the
+* `[:clone-for key]` - The node's content will be cloned for each item in the
   sequence found at *key*. This creates a new "scope" for :content (ie :content
 will look up its key relative to the cloned item)
-* `[:set-attr *attr-name* *key*]` - Sets the nodes *attr-name* attribute to
+* `[:set-attr attr-name key]` - Sets the nodes *attr-name* attribute to
   value found at *key*.
-* `[:set-classes *key*]` - Looks up map of class keywords to booleans at *key*,
+* `[:set-classes key]` - Looks up map of class keywords to booleans at *key*,
   for each class whose value is truthy, adds the class to the node.
-* `[:set-class *class* *key*]` - If value at *key* is truthy, then add class
+* `[:set-class class key]` - If value at *key* is truthy, then add class
   named by *class* keyword to nodes classes (or do nothing if already present).
 If value at *key* is falsey, then remove the class instead (or do nothing if
 already absent).
-* `[:append-content *key*]` - Append content found at *key* to the nodes
+* `[:append-content key]` - Append content found at *key* to the nodes
   content.
-* `[:prepend-content *key*]` - Prepend content found at *key* to the nodes
+* `[:prepend-content key]` - Prepend content found at *key* to the nodes
   content.
-* `[:set-element-type *key*]` - Replace element type of node with element type
+* `[:set-element-type key]` - Replace element type of node with element type
   keyword found at *key*. 
 
 
