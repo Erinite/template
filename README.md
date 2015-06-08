@@ -7,26 +7,12 @@ Transform hiccup templates using data-driven enlive-inspired transformations.
 
 ## Installation
 
-[![Clojars Project](http://clojars.org/erinite/template/latest-version.svg)](http://clojars.org/erinite/template)
-
-### Leiningen
-
 Add the following to your `:dependencies`:
 
+[![Clojars Project](http://clojars.org/erinite/template/latest-version.svg)](http://clojars.org/erinite/template)
 
-```clj
-[erinite/template "0.1.1"]
-```
-
-### Maven
-
-```xml
-<dependency>
-  <groupId>erinite</groupId>
-  <artifactId>template</artifactId>
-  <version>0.1.0</version>
-</dependency>
-```
+If you do not use leiningen, click the above banner to get instructions for
+maven.
 
 ## Dependencies
 
