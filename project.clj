@@ -1,4 +1,4 @@
-(defproject erinite/template "0.1.1"
+(defproject erinite/template "0.1.3-SNAPSHOT"
   :description "Hiccup transformation library"
   :url "https://github.com/Erinite/template"
   :license {:name "Eclipse Public License"
