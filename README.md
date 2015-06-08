@@ -212,7 +212,7 @@ To use custom actions, you simply pass them to `compile-template` or `compile-pr
 ;; Define transformation function
 (defn upper-case-transformation
   [[elem attrs & content :as template] parameters scoped-parameters action-arguments child-transformations]
-  (apply vector elem attrs ))
+  (apply vector elem attrs (map clojure.string/upper-case content))
 
 ;; Create action map (possibly merging custom transformations into the default map)
 (def my-custom-actions
