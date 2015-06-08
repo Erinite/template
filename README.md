@@ -173,7 +173,7 @@ functions is simple:
 
 ### Custom Actions
 
-Both compile-template and compile-preprocessed take an optional actions-map as a
+Both `compile-template` and `compile-preprocessed` take an optional actions-map as a
 last argument. If it is omitted, then
 `erinite.template.transforms/default-transforms` is used.
 
@@ -205,6 +205,27 @@ As an example, the transformation function for :content looks like this:
 
 Note that content does not apply the child-transformations (since it overwrites
 any children the node may have)
+
+To use custom actions, you simply pass them to `compile-template` or `compile-preprocessed`:
+
+```clj
+;; Define transformation function
+(defn upper-case-transformation
+  [[elem attrs & content :as template] parameters scoped-parameters action-arguments child-transformations]
+  (apply vector elem attrs ))
+
+;; Create action map (possibly merging custom transformations into the default map)
+(def my-custom-actions
+  (assoc
+    erinite.template.transforms/default-transform
+    :upper-case
+    upper-case-transformation))
+
+;; Compile your templates
+(def render-template (t/compile-template hiccup transformations))
+(def render-template (t/compile-preprocessed preprocessed-template))
+
+```
 
 
 ## Known Limitations
