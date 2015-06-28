@@ -248,7 +248,7 @@ To use custom actions, you simply pass them to `compile-template` or `compile-pr
 ## Known Limitations
 
 1. `selectors`: Unlike CSS, there is currently no way to specify that a node must be a direct child of another.
-1. `transformations`: Transformations are always applied to the content of a node, so it is not possible to modify the parent (in practice this means that clone-for can clone the nodes' children but not the node itself, to do so you would have to select the parent instead). #10 may fix this.
+1. `transformations`: Transformations are always applied to the content of a node, so it is not possible to modify the parent (in practice this means that clone-for can clone the nodes' children but not the node itself, to do so you would have to select the parent instead). [Issue #10](https://github.com/Erinite/template/issues/10) may fix this.
 
 
 ## Future
