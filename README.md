@@ -128,6 +128,10 @@ already absent).
 
 `korks` can be either a single keyword, or a vector of keywords.
 
+A more "designer-friendly" form of writing transformations is to use the
+[Erinite/template-stylesheets](https://github.com/Erinite/template-stylesheets)
+companion library.
+
 
 ### Preprocessing
 
