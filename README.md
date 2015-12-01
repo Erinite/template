@@ -73,7 +73,7 @@ The call to render-template would output this transformed hiccup template:
 
 ### Transformations
 
-Transformations are specified as a map, where the key repersents a `selector`
+Transformations are specified as a map, where the key represents a `selector`
 and the value represents an `action` to apply to the node addressed by the
 selector.
 
